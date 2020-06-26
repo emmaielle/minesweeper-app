@@ -2,10 +2,13 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    flexWrap: 'wrap',
-    height: '100%',
+    flex: 1,
     justifyContent: 'center',
     padding: '3%',
+  },
+  cells: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 

@@ -1,14 +1,21 @@
 import { StyleSheet } from 'react-native';
 import { SECONDARY } from '../../constants/theme';
 
-const styles = StyleSheet.create({
-  cell: {
-    backgroundColor: SECONDARY,
-    borderRadius: 5,
-    height: 30,
-    margin: '2%',
-    width: 30,
-  },
-});
+export const styles = (flexBasis) => {
+  return StyleSheet.create({
+    cell: {
+      alignItems: 'center',
+      backgroundColor: SECONDARY,
+      borderRadius: 5,
+      flexGrow: 1,
+      flexShrink: 0,
+      flexBasis,
+      height: 30,
+      margin: '1%',
+      justifyContent: 'center',
+      width: 30,
+    },
+  });
+};
 
 export default styles;

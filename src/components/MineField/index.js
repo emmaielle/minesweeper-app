@@ -9,13 +9,21 @@ import styles from './styles';
 
 const MineField = ({ level }) => {
   const renderCells = () => {
-    const cellNumber = level * CELL_MULTIPLIER;
+    const totalCells = level * CELL_MULTIPLIER;
     return (
-      <>
-        {[...Array(cellNumber)].map((_cell, i) => {
-          return <Cell key={i} />;
+      <View style={styles.cells}>
+        {[...Array(totalCells)].map((_column, columnIdex) => {
+          return [...Array(totalCells)].map((_cell, rowIndex) => {
+            return (
+              <Cell
+                key={`${rowIndex}${columnIdex}`}
+                totalCells={totalCells}
+                coordinates={{ x: rowIndex, y: columnIdex }}
+              />
+            );
+          });
         })}
-      </>
+      </View>
     );
   };
 
@@ -31,3 +39,15 @@ MineField.propTypes = {
 };
 
 export default MineField;
+
+/**
+ *
+ * Cell Layout
+ *
+ * [0,0][0,1][0,2]
+ * [1,0][1,1][1,2]
+ * [2,0][2,1][2,2]
+ *
+ * Cell: coordinates = [x, y]
+ *
+ */
