@@ -1,18 +1,27 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { PRIMARY, WHITE } from '../../constants/theme';
 
 const styles = StyleSheet.create({
-  scrollView: {
+  screenContainer: {
+    flexGrow: 1,
+    backgroundColor: PRIMARY,
+  },
+  container: {
     alignItems: 'center',
-    backgroundColor: Colors.white,
-    height: '100%',
-    justifyContent: 'space-evenly',
+    backgroundColor: PRIMARY,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   centeredView: {
     alignItems: 'center',
   },
+  splash: {
+    justifyContent: 'center',
+  },
+  text: {
+    color: WHITE,
+  },
   title: {
-    color: Colors.black,
     fontSize: 24,
     fontWeight: '600',
     paddingBottom: 10,
