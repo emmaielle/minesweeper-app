@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
-import { SECONDARY } from '../../constants/theme';
+import { SECONDARY, FONT_SIZE } from '../../constants/theme';
+import { NEIGHBOUR_COLORS } from '../../constants/game';
 
-export const styles = (flexBasis) => {
+export const styles = (flexBasis, neighbourMines) => {
   return StyleSheet.create({
     cell: {
       alignItems: 'center',
@@ -14,6 +15,11 @@ export const styles = (flexBasis) => {
       margin: '1%',
       justifyContent: 'center',
       width: 30,
+    },
+    text: {
+      color: NEIGHBOUR_COLORS[neighbourMines],
+      fontSize: FONT_SIZE.SMALL,
+      fontWeight: '900',
     },
   });
 };

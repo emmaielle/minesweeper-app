@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faFlag, faBomb } from '@fortawesome/free-solid-svg-icons';
@@ -8,13 +8,33 @@ import { CELL_STATES } from '../../constants/game';
 
 import styles from './styles';
 
-const Cell = ({ coordinates, hasMine, onClick, totalCells }) => {
+const Cell = ({
+  coordinates,
+  gameOver,
+  hasMine,
+  matrixSideLength,
+  neighbourMines,
+  onClick,
+  onGameOver,
+}) => {
   const [status, setStatus] = useState(CELL_STATES.INCOGNITO);
 
-  const flexBasis = `${100 / totalCells - 2}%`;
+  const flexBasis = `${100 / matrixSideLength - 2}%`;
 
-  const handleClick = () => {
-    if (status !== CELL_STATES.EXPOSED) {
+  useEffect(() => {
+    if (status === CELL_STATES.EXPOSED && hasMine) {
+      onGameOver();
+    }
+  }, [status, hasMine, onGameOver]);
+
+  useEffect(() => {
+    if (gameOver && hasMine) {
+      setStatus(CELL_STATES.EXPOSED);
+    }
+  }, [gameOver, hasMine]);
+
+  const handleExpose = () => {
+    if (status !== CELL_STATES.EXPOSED && status !== CELL_STATES.FLAGGED) {
       setStatus(CELL_STATES.EXPOSED);
     }
   };
@@ -29,18 +49,30 @@ const Cell = ({ coordinates, hasMine, onClick, totalCells }) => {
     }
   };
 
+  const renderExposedIcon = () => {
+    // TODO: dont show number if neighbourMines === 0
+    return hasMine ? (
+      <FontAwesomeIcon color="maroon" icon={faBomb} />
+    ) : (
+      <Text style={styles(flexBasis, neighbourMines).text}>
+        {neighbourMines}
+      </Text>
+    );
+  };
+
   return (
-    <View style={styles(flexBasis).cell}>
-      <TouchableOpacity onPress={handleClick} onLongPress={toggleFlag}>
-        {status === CELL_STATES.INCOGNITO && (
-          <Text>
-            {coordinates.x} {coordinates.y}
-          </Text>
+    <TouchableOpacity
+      onPress={handleExpose}
+      onLongPress={toggleFlag}
+      style={styles(flexBasis, neighbourMines).cell}
+    >
+      <View>
+        {status === CELL_STATES.FLAGGED && (
+          <FontAwesomeIcon color="green" icon={faFlag} />
         )}
-        {status === CELL_STATES.FLAGGED && <FontAwesomeIcon icon={faFlag} />}
-        {status === CELL_STATES.EXPOSED && <FontAwesomeIcon icon={faBomb} />}
-      </TouchableOpacity>
-    </View>
+        {status === CELL_STATES.EXPOSED && renderExposedIcon()}
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -49,9 +81,12 @@ Cell.propType = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
   }),
+  gameOver: PropTypes.bool.isRequired,
   hasMine: PropTypes.bool.isRequired,
+  matrixSideLength: PropTypes.number.isRequired,
+  neighbourMines: PropTypes.number,
   onClick: PropTypes.func.isRequired,
-  totalCells: PropTypes.number.isRequired,
+  onGameOver: PropTypes.func.isRequired,
 };
 
 export default Cell;
