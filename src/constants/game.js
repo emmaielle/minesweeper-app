@@ -5,7 +5,7 @@ export const LEVELS = {
   EXPERT: 3,
 };
 export const CELL_STATES = {
-  UNCOVERED: 0,
-  COVERED: 1,
-  FLAGGED: 2,
+  INCOGNITO: 0,
+  FLAGGED: 1,
+  EXPOSED: 2,
 };

@@ -8,26 +8,30 @@ import { LEVELS, CELL_MULTIPLIER } from '../../constants/game';
 import styles from './styles';
 
 const MineField = ({ level }) => {
-  const renderCells = () => {
-    const totalCells = level * CELL_MULTIPLIER;
-    return (
+  const totalCells = level * CELL_MULTIPLIER;
+
+  const handleCellClick = () => {
+    console.log('click');
+  };
+
+  return (
+    <View style={styles.container}>
       <View style={styles.cells}>
         {[...Array(totalCells)].map((_column, columnIdex) => {
           return [...Array(totalCells)].map((_cell, rowIndex) => {
             return (
               <Cell
                 key={`${rowIndex}${columnIdex}`}
-                totalCells={totalCells}
                 coordinates={{ x: rowIndex, y: columnIdex }}
+                totalCells={totalCells}
+                onClick={handleCellClick}
               />
             );
           });
         })}
       </View>
-    );
-  };
-
-  return <View style={styles.container}>{renderCells()}</View>;
+    </View>
+  );
 };
 
 MineField.defaultProps = {
