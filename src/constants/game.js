@@ -5,7 +5,7 @@ export const LEVELS = {
     MINES: 10,
   },
   INTERMEDIATE: {
-    INDEX: 2,
+    INDEX: 1,
     MINES: 40,
   },
   EXPERT: {
@@ -20,12 +20,12 @@ export const CELL_STATES = {
 };
 
 export const NEIGHBOUR_COLORS = {
-  1: '#450920',
-  2: '#450920',
-  3: '#450920',
-  4: '#450920',
-  5: '#450920',
-  6: '#450920',
-  7: '#450920',
-  8: '#450920',
+  1: '#8332AC',
+  2: '#EE6123',
+  3: '#0197F6',
+  4: '#D7263D',
+  5: '#5FAD56',
+  6: '#FFBA08',
+  7: '#12EAEA',
+  8: '#DB2763',
 };
