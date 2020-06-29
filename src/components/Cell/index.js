@@ -10,9 +10,9 @@ import styles from './styles';
 
 const Cell = ({
   coordinates,
+  exposed,
   gameOver,
   hasMine,
-  level,
   matrixSideLength,
   neighbourMines,
   onClick,
@@ -23,9 +23,10 @@ const Cell = ({
   const flexBasis = `${100 / matrixSideLength - 2}%`;
 
   useEffect(() => {
-    debugger;
-    setStatus(CELL_STATES.INCOGNITO);
-  }, [level]);
+    if (exposed && status !== CELL_STATES.FLAGGED) {
+      setStatus(CELL_STATES.EXPOSED);
+    }
+  }, [exposed, status]);
 
   useEffect(() => {
     if (status === CELL_STATES.EXPOSED && hasMine) {
@@ -46,7 +47,9 @@ const Cell = ({
       status !== CELL_STATES.FLAGGED
     ) {
       setStatus(CELL_STATES.EXPOSED);
-      onClick(coordinates);
+      if (!hasMine && neighbourMines === 0) {
+        onClick(coordinates);
+      }
     }
   };
 
@@ -98,9 +101,9 @@ Cell.propType = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
   }),
+  exposed: PropTypes.bool.isRequired,
   gameOver: PropTypes.bool.isRequired,
   hasMine: PropTypes.bool.isRequired,
-  level: PropTypes.number.isRequired,
   matrixSideLength: PropTypes.number.isRequired,
   neighbourMines: PropTypes.number,
   onClick: PropTypes.func.isRequired,

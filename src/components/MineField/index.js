@@ -1,79 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Cell from '../Cell';
 import { LEVELS, CELL_MULTIPLIER } from '../../constants/game';
-import { ACCENT } from '../../constants/theme';
-import {
-  getRandomCoordinatesArray,
-  getNeighbourMines,
-  isCoordinateIncluded,
-} from '../../utils/minesweeper';
 
 import styles from './styles';
 
-const MineField = ({ level, onLoad }) => {
-  const matrixSideLength = level.INDEX * CELL_MULTIPLIER;
-  const totalMines = level.MINES;
-
-  const [currentClick, setCurrentClick] = useState([]);
+const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
   const [gameOver, setGameOver] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [mineLayout, setMineLayout] = useState([]);
-
-  useEffect(() => {
-    const exposeEmptyCells = () => {
-      // iterate from currentclick outwards
-      console.log(currentClick);
-    };
-
-    exposeEmptyCells();
-  }, [currentClick]);
-
-  useEffect(() => {
-    const layoutMineField = () => {
-      const minesCoordinates = getRandomCoordinatesArray(
-        totalMines,
-        matrixSideLength,
-      );
-
-      const layout = [...Array(matrixSideLength)].map((_column, columnIdex) => {
-        return [...Array(matrixSideLength)].map((_cell, rowIndex) => {
-          const cellCoordinate = [columnIdex, rowIndex];
-
-          const hasMine = isCoordinateIncluded(
-            cellCoordinate,
-            minesCoordinates,
-          );
-          const neighbourMines = getNeighbourMines(
-            cellCoordinate,
-            minesCoordinates,
-          );
-
-          return {
-            coordinateX: columnIdex,
-            coordinateY: rowIndex,
-            exposed: false,
-            hasMine,
-            neighbourMines,
-          };
-        });
-      });
-
-      setLoading(false);
-      setMineLayout(layout);
-    };
-
-    layoutMineField();
-  }, [matrixSideLength, onLoad, totalMines]);
 
   const handleCellClick = (coordinate) => {
-    setCurrentClick(coordinate);
+    onExposeEmptyCells(coordinate);
   };
 
-  const renderCells = () =>
-    mineLayout.map((column) =>
+  const renderCells = () => {
+    return layout.map((column) =>
       column.map((cell) => (
         <Cell
           key={`${cell.coordinateX}${cell.coordinateY}`}
@@ -89,12 +31,7 @@ const MineField = ({ level, onLoad }) => {
         />
       )),
     );
-
-  if (loading) {
-    return (
-      <ActivityIndicator style={styles.extend} color={ACCENT} size="large" />
-    );
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -104,16 +41,20 @@ const MineField = ({ level, onLoad }) => {
 };
 
 MineField.defaultProps = {
-  level: LEVELS.BEGINNER,
-  onLoad: () => {},
+  level: LEVELS[0].INDEX,
+  matrixSideLength: LEVELS[0].INDEX * CELL_MULTIPLIER,
+  onExposeEmptyCells: () => {},
 };
 
 MineField.propTypes = {
+  layout: PropTypes.array,
   level: PropTypes.shape({
     INDEX: PropTypes.number.isRequired,
+    NAME: PropTypes.string.isRequired,
     MINES: PropTypes.number.isRequired,
   }).isRequired,
-  onLoad: PropTypes.func.isRequired,
+  matrixSideLength: PropTypes.number.isRequired,
+  onExposeEmptyCells: PropTypes.func.isRequired,
 };
 
 export default MineField;

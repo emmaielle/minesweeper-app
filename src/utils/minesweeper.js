@@ -1,3 +1,14 @@
+export const getEmptySquareMatrix = (sideLength) => {
+  return [...Array(sideLength)].map(() => {
+    return [...Array(sideLength)].map(() => {
+      // const hasMine = true;
+      return {
+        // hasMine,
+      };
+    });
+  });
+};
+
 export const getRandomNumber = (inclusiveMaxNum) => {
   return Math.floor(Math.random() * inclusiveMaxNum);
 };
@@ -30,10 +41,6 @@ export const isCoordinateIncluded = (coordinate, containerArray) => {
 export const getNeighbourMines = (cellCoordinate, minesCoordinates) => {
   let counter = 0;
   minesCoordinates.forEach((coordinate) => {
-    // if (cellCoordinate[0] === 0 && cellCoordinate[1] === 3) {
-    //   debugger;
-    // }
-    console.log(minesCoordinates);
     const neighbouringX =
       cellCoordinate[0] >= coordinate[0] - 1 &&
       cellCoordinate[0] <= coordinate[0] + 1;
@@ -48,6 +55,72 @@ export const getNeighbourMines = (cellCoordinate, minesCoordinates) => {
   });
 
   return counter;
+};
+
+// TODO: hacer mas entendible
+export const getNeighbourCoordinates = (currentCoordinate, matrixLength) => {
+  const array = [];
+  for (let x = currentCoordinate[0] - 1; x <= currentCoordinate[0] + 1; x++) {
+    if (x >= 0 && x < matrixLength) {
+      for (
+        let y = currentCoordinate[1] - 1;
+        y <= currentCoordinate[1] + 1;
+        y++
+      ) {
+        if (
+          y < 0 ||
+          (currentCoordinate[0] === x && currentCoordinate[1] === y) ||
+          y >= matrixLength
+        ) {
+          continue;
+        }
+        array.push([x, y]);
+      }
+    }
+  }
+
+  return array;
+};
+
+export const updateMineFieldWithExposedCells = (
+  currentLayout,
+  currentCoordinate,
+) => {
+  recursiveExposedCellsSearch(currentLayout, currentCoordinate);
+  return currentLayout;
+};
+
+export const recursiveExposedCellsSearch = (
+  currentLayout,
+  currentCoordinate,
+) => {
+  const neighbourCoordinates = getNeighbourCoordinates(
+    currentCoordinate,
+    currentLayout[0].length,
+  );
+
+  neighbourCoordinates.forEach((neighbourCoord) => {
+    const currentNeighbourX = neighbourCoord[0];
+    const currentNeighbourY = neighbourCoord[1];
+
+    const currentNeighbour =
+      currentLayout[currentNeighbourX] &&
+      currentLayout[currentNeighbourX][currentNeighbourY];
+
+    if (!currentNeighbour || currentNeighbour.exposed) {
+      return;
+    }
+
+    currentLayout[currentNeighbourX][currentNeighbourY].exposed = true;
+
+    if (currentNeighbour.neighbourMines > 0) {
+      return;
+    }
+    recursiveExposedCellsSearch(currentLayout, [
+      currentNeighbourX,
+      currentNeighbourY,
+    ]);
+  });
 };
 
 // const fixedCoordinates = [
