@@ -1,14 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 
 import { LEVELS, CELL_MULTIPLIER } from '../../constants/game';
 import { ACCENT } from '../../constants/theme';
 import {
-  getRandomCoordinatesArray,
-  getNeighbourMines,
+  getNeighbourCoordinates,
   getEmptySquareMatrix,
   updateMineFieldWithExposedCells,
-  isCoordinateIncluded,
 } from '../../utils/minesweeper';
 import Header from '../Header';
 import MineField from '../MineField';
@@ -45,43 +43,39 @@ const MineSweeper = () => {
   }, [layoutMineField, newGame]);
 
   const layoutMineField = useCallback(() => {
-    // puedo skipear esto
-    const minesCoordinates = getRandomCoordinatesArray(
-      totalMines,
-      matrixSideLength,
-    );
-
-    let layout = getEmptySquareMatrix(matrixSideLength);
+    let layout = getEmptySquareMatrix(matrixSideLength, currentLevel.MINES);
 
     layout = layout.map((column, columnIdex) =>
       column.map((cell, rowIndex) => {
         const cellCoordinate = [columnIdex, rowIndex];
-        // const neighCoord = getCoordNeigh()
-        // loop layout[i][j].hasMine if !hasMine
-
-        const hasMine = isCoordinateIncluded(cellCoordinate, minesCoordinates);
-        const neighbourMines = getNeighbourMines(
+        const neighbourCoordinates = getNeighbourCoordinates(
           cellCoordinate,
-          minesCoordinates,
+          matrixSideLength,
         );
+
+        let neighbourMines = 0;
+        neighbourCoordinates.forEach((coord) => {
+          if (layout[coord[0]][coord[1]].hasMine) {
+            neighbourMines++;
+          }
+        });
 
         return {
           coordinateX: columnIdex,
           coordinateY: rowIndex,
           exposed: false,
-          // hasMine: cell.hasMine,
-          hasMine,
+          hasMine: cell.hasMine,
           neighbourMines,
         };
       }),
     );
 
     setMineLayout(layout);
-  }, [matrixSideLength, totalMines]);
+  }, [currentLevel.MINES, matrixSideLength]);
 
   return (
     <View style={styles.mineSweeper}>
-      <Header onChangeLevel={handleChangeLevel} />
+      <Header currentLevel={currentLevel} onChangeLevel={handleChangeLevel} />
       {mineLayout ? (
         <MineField
           level={currentLevel}
@@ -94,9 +88,6 @@ const MineSweeper = () => {
           <ActivityIndicator color={ACCENT} size="large" />
         </View>
       )}
-      <View>
-        <Text>Mines left + Time</Text>
-      </View>
     </View>
   );
 };

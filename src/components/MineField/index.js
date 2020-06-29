@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Cell from '../Cell';
-import { LEVELS, CELL_MULTIPLIER } from '../../constants/game';
+import Popup from '../Popup';
+import { LEVELS } from '../../constants/game';
+import { getMatrixSideLength } from '../../utils/minesweeper';
 
 import styles from './styles';
 
 const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
+  const [exposedCellCount, setExposedCellCount] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [minesLeft, setMinesLeft] = useState(level.MINES);
 
   const handleCellClick = (coordinate) => {
     onExposeEmptyCells(coordinate);
   };
+
+  // const handleExpose = () => {
+  //   setExposedCellCount(exposedCellCount + 1);
+  // };
+
+  const handleFlag = () => setMinesLeft(minesLeft - 1);
 
   const renderCells = () => {
     return layout.map((column) =>
@@ -27,6 +37,8 @@ const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
           matrixSideLength={matrixSideLength}
           neighbourMines={cell.neighbourMines}
           onClick={handleCellClick}
+          // onExpose={handleExpose}
+          onFlag={handleFlag}
           onGameOver={() => setGameOver(true)}
         />
       )),
@@ -34,15 +46,23 @@ const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cells}>{renderCells()}</View>
-    </View>
+    <>
+      <View style={styles.container}>
+        <View style={styles.cells}>{renderCells()}</View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.info}>Mines left: {exposedCellCount}</Text>
+        </View>
+      </View>
+      <Popup visible={gameOver}>
+        <Text>You win!</Text>
+      </Popup>
+    </>
   );
 };
 
 MineField.defaultProps = {
   level: LEVELS[0].INDEX,
-  matrixSideLength: LEVELS[0].INDEX * CELL_MULTIPLIER,
+  matrixSideLength: getMatrixSideLength(LEVELS[0]),
   onExposeEmptyCells: () => {},
 };
 

@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faFlag, faBomb } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 
-import { CELL_STATES } from '../../constants/game';
+import { CELL_STATES, LEVELS } from '../../constants/game';
+import { getMatrixSideLength } from '../../utils/minesweeper';
 
 import styles from './styles';
 
@@ -16,6 +17,7 @@ const Cell = ({
   matrixSideLength,
   neighbourMines,
   onClick,
+  onFlag,
   onGameOver,
 }) => {
   const [status, setStatus] = useState(CELL_STATES.INCOGNITO);
@@ -60,6 +62,7 @@ const Cell = ({
           ? CELL_STATES.FLAGGED
           : CELL_STATES.INCOGNITO;
       setStatus(newStatus);
+      onFlag();
     }
   };
 
@@ -96,6 +99,17 @@ const Cell = ({
   );
 };
 
+Cell.defaultProps = {
+  exposed: false,
+  gameOver: false,
+  hasMine: false,
+  matrixSideLength: getMatrixSideLength(LEVELS[0]),
+  neighbourMines: 0,
+  onClick: () => {},
+  onFlag: () => {},
+  onGameOver: () => {},
+};
+
 Cell.propType = {
   coordinates: PropTypes.shape({
     x: PropTypes.number.isRequired,
@@ -107,6 +121,7 @@ Cell.propType = {
   matrixSideLength: PropTypes.number.isRequired,
   neighbourMines: PropTypes.number,
   onClick: PropTypes.func.isRequired,
+  onFlag: PropTypes.func.isRequired,
   onGameOver: PropTypes.func.isRequired,
 };
 
