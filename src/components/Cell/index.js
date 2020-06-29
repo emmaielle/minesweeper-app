@@ -10,6 +10,7 @@ import styles from './styles';
 
 const Cell = ({
   coordinates,
+  exposed,
   gameOver,
   hasMine,
   matrixSideLength,
@@ -20,6 +21,12 @@ const Cell = ({
   const [status, setStatus] = useState(CELL_STATES.INCOGNITO);
 
   const flexBasis = `${100 / matrixSideLength - 2}%`;
+
+  useEffect(() => {
+    if (exposed && status !== CELL_STATES.FLAGGED) {
+      setStatus(CELL_STATES.EXPOSED);
+    }
+  }, [exposed, status]);
 
   useEffect(() => {
     if (status === CELL_STATES.EXPOSED && hasMine) {
@@ -34,13 +41,20 @@ const Cell = ({
   }, [gameOver, hasMine]);
 
   const handleExpose = () => {
-    if (status !== CELL_STATES.EXPOSED && status !== CELL_STATES.FLAGGED) {
+    if (
+      !gameOver &&
+      status !== CELL_STATES.EXPOSED &&
+      status !== CELL_STATES.FLAGGED
+    ) {
       setStatus(CELL_STATES.EXPOSED);
+      if (!hasMine && neighbourMines === 0) {
+        onClick(coordinates);
+      }
     }
   };
 
-  const toggleFlag = () => {
-    if (status !== CELL_STATES.EXPOSED) {
+  const handleToggleFlag = () => {
+    if (!gameOver && status !== CELL_STATES.EXPOSED) {
       const newStatus =
         status === CELL_STATES.INCOGNITO
           ? CELL_STATES.FLAGGED
@@ -50,21 +64,27 @@ const Cell = ({
   };
 
   const renderExposedIcon = () => {
-    // TODO: dont show number if neighbourMines === 0
+    const safeCellContent =
+      neighbourMines !== 0 ? (
+        <Text style={styles(flexBasis, neighbourMines).text}>
+          {neighbourMines}
+        </Text>
+      ) : null;
+
     return hasMine ? (
       <FontAwesomeIcon color="maroon" icon={faBomb} />
     ) : (
-      <Text style={styles(flexBasis, neighbourMines).text}>
-        {neighbourMines}
-      </Text>
+      safeCellContent
     );
   };
 
   return (
     <TouchableOpacity
       onPress={handleExpose}
-      onLongPress={toggleFlag}
-      style={styles(flexBasis, neighbourMines).cell}
+      onLongPress={handleToggleFlag}
+      style={
+        styles(flexBasis, neighbourMines, status === CELL_STATES.EXPOSED).cell
+      }
     >
       <View>
         {status === CELL_STATES.FLAGGED && (
@@ -81,6 +101,7 @@ Cell.propType = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
   }),
+  exposed: PropTypes.bool.isRequired,
   gameOver: PropTypes.bool.isRequired,
   hasMine: PropTypes.bool.isRequired,
   matrixSideLength: PropTypes.number.isRequired,

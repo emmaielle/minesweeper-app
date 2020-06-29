@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
-import { SECONDARY, FONT_SIZE } from '../../constants/theme';
+
+import { SECONDARY, FONT_SIZE, SECONDARY_ACCENT } from '../../constants/theme';
 import { NEIGHBOUR_COLORS } from '../../constants/game';
 
-export const styles = (flexBasis, neighbourMines) => {
+export const styles = (flexBasis, neighbourMines, exposed) => {
   return StyleSheet.create({
     cell: {
       alignItems: 'center',
-      backgroundColor: SECONDARY,
+      backgroundColor: exposed ? SECONDARY_ACCENT : SECONDARY,
       borderRadius: 5,
       flexGrow: 1,
       flexShrink: 0,
