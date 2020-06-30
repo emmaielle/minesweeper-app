@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Cell from '../Cell';
-import Popup from '../Popup';
+import GameOverModal from '../GameOverModal';
 import { LEVELS, CELL_STATES } from '../../constants/game';
 import {
   getMatrixSideLength,
@@ -12,8 +12,13 @@ import {
 
 import styles from './styles';
 
-const MineField = ({ layout, level, matrixSideLength, onExposeCells }) => {
-  const [exposed, setExposed] = useState(0);
+const MineField = ({
+  layout,
+  level,
+  matrixSideLength,
+  onExposeCells,
+  onNewGame,
+}) => {
   const [gameLost, setGameLost] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [minesLeft, setMinesLeft] = useState(level.MINES);
@@ -21,7 +26,7 @@ const MineField = ({ layout, level, matrixSideLength, onExposeCells }) => {
   useEffect(() => {
     const exposedCells = countExposedCellsInMatrix(layout);
     const sideLength = getMatrixSideLength(level);
-    setExposed(exposedCells);
+
     if (exposedCells === sideLength * sideLength - level.MINES) {
       setGameWon(true);
     }
@@ -61,12 +66,12 @@ const MineField = ({ layout, level, matrixSideLength, onExposeCells }) => {
       <View style={styles.container}>
         <View style={styles.cells}>{renderCells()}</View>
         <View style={styles.infoContainer}>
-          <Text style={styles.info}>Mines left: {exposed}</Text>
+          <Text style={styles.info}>Mines left: {minesLeft}</Text>
         </View>
       </View>
-      <Popup visible={gameLost || gameWon}>
+      <GameOverModal onRetry={onNewGame} visible={gameLost || gameWon}>
         <Text>{gameLost ? 'You lose!' : 'You win!'}</Text>
-      </Popup>
+      </GameOverModal>
     </>
   );
 };
@@ -75,6 +80,7 @@ MineField.defaultProps = {
   level: LEVELS[0].INDEX,
   matrixSideLength: getMatrixSideLength(LEVELS[0]),
   onExposeEmptyCells: () => {},
+  onNewGame: () => {},
 };
 
 MineField.propTypes = {
@@ -86,6 +92,7 @@ MineField.propTypes = {
   }).isRequired,
   matrixSideLength: PropTypes.number.isRequired,
   onExposeEmptyCells: PropTypes.func.isRequired,
+  onNewGame: PropTypes.func.isRequired,
 };
 
 export default MineField;

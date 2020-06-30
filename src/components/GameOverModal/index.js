@@ -7,7 +7,7 @@ import styles from './styles';
 
 const height = Math.round(Dimensions.get('window').height);
 
-const Popup = ({ visible, children }) => {
+const GameOverModal = ({ children, onRetry, visible }) => {
   const [show, setShow] = useState(visible);
 
   const translateY = useRef(new Animated.Value(0)).current;
@@ -42,6 +42,11 @@ const Popup = ({ visible, children }) => {
 
   const handleClose = () => setShow(false);
 
+  const handleRetry = () => {
+    onRetry();
+    setShow(false);
+  };
+
   return (
     <Animated.View
       style={{
@@ -51,22 +56,30 @@ const Popup = ({ visible, children }) => {
     >
       <View style={styles().modalView}>
         <TouchableOpacity onPress={handleClose} style={styles().closeIcon}>
-          <Text style={styles().closeIconText}>&times;</Text>
+          <Text style={styles().accentText}>&times;</Text>
         </TouchableOpacity>
         <Text style={styles().text}>{children}</Text>
+        <TouchableOpacity
+          onPress={handleRetry}
+          style={styles().buttonContainer}
+        >
+          <Text style={styles().buttonText}>Retry</Text>
+        </TouchableOpacity>
       </View>
     </Animated.View>
   );
 };
 
-Popup.defaultProps = {
+GameOverModal.defaultProps = {
   children: <></>,
+  onRetry: () => {},
   visible: false,
 };
 
-Popup.propTypes = {
+GameOverModal.propTypes = {
   children: PropTypes.node.isRequired,
+  onRetry: PropTypes.func.isRequired,
   visible: PropTypes.bool.isRequired,
 };
 
-export default Popup;
+export default GameOverModal;

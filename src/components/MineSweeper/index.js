@@ -15,12 +15,12 @@ import styles from './styles';
 
 const MineSweeper = () => {
   const [currentLevel, setCurrentLevel] = useState(LEVELS[0]);
-  const [newGame, setNewGame] = useState(true);
   const [mineLayout, setMineLayout] = useState(null);
+  const [newGame, setNewGame] = useState(true);
 
   const matrixSideLength = currentLevel.INDEX * CELL_MULTIPLIER;
 
-  const handleChangeLevel = (index) => {
+  const handleResetGame = (index) => {
     setCurrentLevel(LEVELS[index]);
     setNewGame(true);
     setMineLayout(null);
@@ -86,13 +86,14 @@ const MineSweeper = () => {
 
   return (
     <View style={styles.mineSweeper}>
-      <Header currentLevel={currentLevel} onChangeLevel={handleChangeLevel} />
+      <Header currentLevel={currentLevel} onChangeLevel={handleResetGame} />
       {mineLayout ? (
         <MineField
           level={currentLevel}
           layout={mineLayout}
           matrixSideLength={matrixSideLength}
           onExposeCells={handleExposeCells}
+          onNewGame={() => handleResetGame(currentLevel.INDEX - 1)}
         />
       ) : (
         <View style={styles.loader}>
