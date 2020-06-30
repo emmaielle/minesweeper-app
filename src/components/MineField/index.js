@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import Cell from '../Cell';
 import Popup from '../Popup';
-import { LEVELS } from '../../constants/game';
+import { LEVELS, CELL_STATES } from '../../constants/game';
 import { getMatrixSideLength } from '../../utils/minesweeper';
 
 import styles from './styles';
@@ -22,7 +22,10 @@ const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
   //   setExposedCellCount(exposedCellCount + 1);
   // };
 
-  const handleFlag = () => setMinesLeft(minesLeft - 1);
+  const handleFlag = (status) => {
+    let counter = status === CELL_STATES.FLAGGED ? -1 : 1;
+    setMinesLeft(minesLeft + counter);
+  };
 
   const renderCells = () => {
     return layout.map((column) =>
@@ -50,7 +53,7 @@ const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
       <View style={styles.container}>
         <View style={styles.cells}>{renderCells()}</View>
         <View style={styles.infoContainer}>
-          <Text style={styles.info}>Mines left: {exposedCellCount}</Text>
+          <Text style={styles.info}>Mines left: {minesLeft}</Text>
         </View>
       </View>
       <Popup visible={gameOver}>

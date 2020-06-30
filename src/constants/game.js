@@ -1,19 +1,19 @@
-export const CELL_MULTIPLIER = 4;
+export const CELL_MULTIPLIER = 8;
 export const LEVELS = [
   {
     NAME: 'Beginner',
     INDEX: 1,
-    MINES: 6,
+    MINES: 10,
   },
   {
     NAME: 'Intermediate',
     INDEX: 2,
-    MINES: 10,
+    MINES: 40,
   },
   {
     NAME: 'Expert',
     INDEX: 3,
-    MINES: 20,
+    MINES: 99,
   },
 ];
 export const CELL_STATES = {
