@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Cell from '../Cell';
-import Popup from '../Popup';
+import GameOverModal from '../GameOverModal';
 import { LEVELS, CELL_STATES } from '../../constants/game';
-import { getMatrixSideLength } from '../../utils/minesweeper';
+import {
+  getMatrixSideLength,
+  countExposedCellsInMatrix,
+} from '../../utils/minesweeper';
 
 import styles from './styles';
 
-const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
-  const [exposedCellCount, setExposedCellCount] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
+const MineField = ({
+  layout,
+  level,
+  matrixSideLength,
+  onExposeCells,
+  onNewGame,
+}) => {
+  const [gameLost, setGameLost] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
   const [minesLeft, setMinesLeft] = useState(level.MINES);
 
-  const handleCellClick = (coordinate) => {
-    onExposeEmptyCells(coordinate);
-  };
+  useEffect(() => {
+    const exposedCells = countExposedCellsInMatrix(layout);
+    const sideLength = getMatrixSideLength(level);
 
-  // const handleExpose = () => {
-  //   setExposedCellCount(exposedCellCount + 1);
-  // };
+    if (exposedCells === sideLength * sideLength - level.MINES) {
+      setGameWon(true);
+    }
+  }, [layout, level, setGameWon]);
+
+  const handleCellClick = (coordinate) => {
+    onExposeCells(coordinate);
+  };
 
   const handleFlag = (status) => {
     let counter = status === CELL_STATES.FLAGGED ? -1 : 1;
@@ -34,15 +48,14 @@ const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
           key={`${cell.coordinateX}${cell.coordinateY}`}
           coordinates={{ x: cell.coordinateX, y: cell.coordinateY }}
           exposed={cell.exposed}
-          gameOver={gameOver}
+          gameLost={gameLost}
           hasMine={cell.hasMine}
           level={level.INDEX}
           matrixSideLength={matrixSideLength}
           neighbourMines={cell.neighbourMines}
           onClick={handleCellClick}
-          // onExpose={handleExpose}
           onFlag={handleFlag}
-          onGameOver={() => setGameOver(true)}
+          onGameLost={() => setGameLost(true)}
         />
       )),
     );
@@ -56,9 +69,9 @@ const MineField = ({ layout, level, matrixSideLength, onExposeEmptyCells }) => {
           <Text style={styles.info}>Mines left: {minesLeft}</Text>
         </View>
       </View>
-      <Popup visible={gameOver}>
-        <Text>You win!</Text>
-      </Popup>
+      <GameOverModal onRetry={onNewGame} visible={gameLost || gameWon}>
+        <Text>{gameLost ? 'You lose!' : 'You win!'}</Text>
+      </GameOverModal>
     </>
   );
 };
@@ -67,6 +80,7 @@ MineField.defaultProps = {
   level: LEVELS[0].INDEX,
   matrixSideLength: getMatrixSideLength(LEVELS[0]),
   onExposeEmptyCells: () => {},
+  onNewGame: () => {},
 };
 
 MineField.propTypes = {
@@ -78,6 +92,7 @@ MineField.propTypes = {
   }).isRequired,
   matrixSideLength: PropTypes.number.isRequired,
   onExposeEmptyCells: PropTypes.func.isRequired,
+  onNewGame: PropTypes.func.isRequired,
 };
 
 export default MineField;

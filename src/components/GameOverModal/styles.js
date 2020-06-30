@@ -29,7 +29,7 @@ export const styles = (visible) => {
       position: 'absolute',
       right: 0,
     },
-    closeIconText: {
+    accentText: {
       color: ACCENT,
       fontSize: FONT_SIZE.MEDIUM,
       fontWeight: 'bold',
@@ -37,6 +37,18 @@ export const styles = (visible) => {
     text: {
       color: BLACK,
       fontSize: FONT_SIZE.MEDIUM,
+    },
+    buttonContainer: {
+      backgroundColor: ACCENT,
+      borderRadius: 9,
+      marginTop: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    buttonText: {
+      color: SECONDARY,
+      fontSize: FONT_SIZE.MEDIUM,
+      fontWeight: 'bold',
     },
   });
 };
