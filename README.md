@@ -9,7 +9,8 @@ This repo includes my version of the classic Minesweeper in React Native.
 - [Game Instructions](#game-instructions)
 - [Run App](#run-app)
 - [Test App](#test-app)
-- [Chosen Solution](#test-app)
+- [Project Solution](#project-solution)
+- [Issues and Improvements](#issues-and-improvements)
 
 ## Game Instructions 
 
