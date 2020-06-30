@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: '3%',
+    padding: '1%',
   },
   cells: {
     flexDirection: 'row',
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: 30,
+    height: 50,
     justifyContent: 'space-between',
     padding: 4,
   },

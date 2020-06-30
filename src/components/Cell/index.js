@@ -5,7 +5,6 @@ import { faFlag, faBomb } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 
 import { CELL_STATES, LEVELS } from '../../constants/game';
-import { getMatrixSideLength } from '../../utils/minesweeper';
 
 import styles from './styles';
 
@@ -14,15 +13,13 @@ const Cell = ({
   exposed,
   gameLost,
   hasMine,
-  matrixSideLength,
+  level,
   neighbourMines,
   onClick,
   onFlag,
   onGameLost,
 }) => {
   const [status, setStatus] = useState(CELL_STATES.INCOGNITO);
-
-  const flexBasis = `${100 / matrixSideLength - 2}%`;
 
   useEffect(() => {
     if (exposed && status !== CELL_STATES.FLAGGED) {
@@ -71,9 +68,7 @@ const Cell = ({
   const renderExposedIcon = () => {
     const safeCellContent =
       neighbourMines !== 0 ? (
-        <Text style={styles(flexBasis, neighbourMines).text}>
-          {neighbourMines}
-        </Text>
+        <Text style={styles(level, neighbourMines).text}>{neighbourMines}</Text>
       ) : null;
 
     return hasMine ? (
@@ -87,9 +82,7 @@ const Cell = ({
     <TouchableOpacity
       onPress={handleExpose}
       onLongPress={handleToggleFlag}
-      style={
-        styles(flexBasis, neighbourMines, status === CELL_STATES.EXPOSED).cell
-      }
+      style={styles(level, neighbourMines, status === CELL_STATES.EXPOSED).cell}
     >
       <View>
         {status === CELL_STATES.FLAGGED && (
@@ -105,7 +98,7 @@ Cell.defaultProps = {
   exposed: false,
   gameLost: false,
   hasMine: false,
-  matrixSideLength: getMatrixSideLength(LEVELS[0]),
+  level: LEVELS[0],
   neighbourMines: 0,
   onClick: () => {},
   onFlag: () => {},
@@ -120,7 +113,13 @@ Cell.propType = {
   exposed: PropTypes.bool.isRequired,
   gameOver: PropTypes.bool.isRequired,
   hasMine: PropTypes.bool.isRequired,
-  matrixSideLength: PropTypes.number.isRequired,
+  level: PropTypes.shape({
+    INDEX: PropTypes.number.isRequired,
+    NAME: PropTypes.string.isRequired,
+    MINES: PropTypes.number.isRequired,
+    ROWS: PropTypes.number.isRequired,
+    COLUMNS: PropTypes.number.isRequired,
+  }).isRequired,
   neighbourMines: PropTypes.number,
   onClick: PropTypes.func.isRequired,
   onFlag: PropTypes.func.isRequired,

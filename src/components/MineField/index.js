@@ -5,29 +5,19 @@ import PropTypes from 'prop-types';
 import Cell from '../Cell';
 import GameOverModal from '../GameOverModal';
 import { LEVELS, CELL_STATES } from '../../constants/game';
-import {
-  getMatrixSideLength,
-  countExposedCellsInMatrix,
-} from '../../utils/minesweeper';
+import { countExposedCellsInMatrix } from '../../utils/minesweeper';
 
 import styles from './styles';
 
-const MineField = ({
-  layout,
-  level,
-  matrixSideLength,
-  onExposeCells,
-  onNewGame,
-}) => {
+const MineField = ({ layout, level, onExposeCells, onNewGame }) => {
   const [gameLost, setGameLost] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [minesLeft, setMinesLeft] = useState(level.MINES);
 
   useEffect(() => {
     const exposedCells = countExposedCellsInMatrix(layout);
-    const sideLength = getMatrixSideLength(level);
 
-    if (exposedCells === sideLength * sideLength - level.MINES) {
+    if (exposedCells === level.ROWS * level.COLUMNS - level.MINES) {
       setGameWon(true);
     }
   }, [layout, level, setGameWon]);
@@ -50,8 +40,7 @@ const MineField = ({
           exposed={cell.exposed}
           gameLost={gameLost}
           hasMine={cell.hasMine}
-          level={level.INDEX}
-          matrixSideLength={matrixSideLength}
+          level={level}
           neighbourMines={cell.neighbourMines}
           onClick={handleCellClick}
           onFlag={handleFlag}
@@ -78,7 +67,6 @@ const MineField = ({
 
 MineField.defaultProps = {
   level: LEVELS[0].INDEX,
-  matrixSideLength: getMatrixSideLength(LEVELS[0]),
   onExposeEmptyCells: () => {},
   onNewGame: () => {},
 };
@@ -89,8 +77,9 @@ MineField.propTypes = {
     INDEX: PropTypes.number.isRequired,
     NAME: PropTypes.string.isRequired,
     MINES: PropTypes.number.isRequired,
+    ROWS: PropTypes.number.isRequired,
+    COLUMNS: PropTypes.number.isRequired,
   }).isRequired,
-  matrixSideLength: PropTypes.number.isRequired,
   onExposeEmptyCells: PropTypes.func.isRequired,
   onNewGame: PropTypes.func.isRequired,
 };
