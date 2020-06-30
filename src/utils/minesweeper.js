@@ -1,4 +1,5 @@
 import { CELL_MULTIPLIER } from '../constants/game';
+import { getRandomNumber } from './math';
 
 export const getMatrixSideLength = (level) => {
   return level.INDEX * CELL_MULTIPLIER;
@@ -36,19 +37,6 @@ export const getRandomCoordinatesSet = (maxMines, matrixSideLength) => {
   return coordinates;
 };
 
-/** unused */
-export const getRandomNumber = (inclusiveMaxNum) => {
-  return Math.floor(Math.random() * inclusiveMaxNum);
-};
-
-export const isCoordinateIncluded = (coordinate, containerArray) => {
-  const result = containerArray.some(
-    (item) => item[0] === coordinate[0] && item[1] === coordinate[1],
-  );
-  return result;
-};
-/** unused */
-
 export const getNeighbourCoordinates = (currentCoordinate, matrixLength) => {
   const array = [];
   for (
@@ -75,6 +63,17 @@ export const getNeighbourCoordinates = (currentCoordinate, matrixLength) => {
   }
 
   return array;
+};
+
+export const countExposedCellsInMatrix = (matrix) => {
+  let counter = 0;
+
+  matrix.forEach((row) => {
+    const exposedByRow = row.filter((cell) => cell.exposed).length;
+    counter += exposedByRow;
+  });
+
+  return counter;
 };
 
 export const updateMineFieldWithExposedCells = (

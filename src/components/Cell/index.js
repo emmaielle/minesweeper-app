@@ -12,13 +12,13 @@ import styles from './styles';
 const Cell = ({
   coordinates,
   exposed,
-  gameOver,
+  gameLost,
   hasMine,
   matrixSideLength,
   neighbourMines,
   onClick,
   onFlag,
-  onGameOver,
+  onGameLost,
 }) => {
   const [status, setStatus] = useState(CELL_STATES.INCOGNITO);
 
@@ -32,31 +32,32 @@ const Cell = ({
 
   useEffect(() => {
     if (status === CELL_STATES.EXPOSED && hasMine) {
-      onGameOver();
+      onGameLost();
     }
-  }, [status, hasMine, onGameOver]);
+  }, [status, hasMine, onGameLost]);
 
   useEffect(() => {
-    if (gameOver && hasMine) {
+    if (gameLost && hasMine) {
       setStatus(CELL_STATES.EXPOSED);
     }
-  }, [gameOver, hasMine]);
+  }, [gameLost, hasMine]);
 
   const handleExpose = () => {
     if (
-      !gameOver &&
+      !gameLost &&
       status !== CELL_STATES.EXPOSED &&
       status !== CELL_STATES.FLAGGED
     ) {
       setStatus(CELL_STATES.EXPOSED);
-      if (!hasMine && neighbourMines === 0) {
+
+      if (!hasMine) {
         onClick(coordinates);
       }
     }
   };
 
   const handleToggleFlag = () => {
-    if (!gameOver && status !== CELL_STATES.EXPOSED) {
+    if (!gameLost && status !== CELL_STATES.EXPOSED) {
       const newStatus =
         status === CELL_STATES.INCOGNITO
           ? CELL_STATES.FLAGGED
@@ -102,13 +103,13 @@ const Cell = ({
 
 Cell.defaultProps = {
   exposed: false,
-  gameOver: false,
+  gameLost: false,
   hasMine: false,
   matrixSideLength: getMatrixSideLength(LEVELS[0]),
   neighbourMines: 0,
   onClick: () => {},
   onFlag: () => {},
-  onGameOver: () => {},
+  onGameLost: () => {},
 };
 
 Cell.propType = {
