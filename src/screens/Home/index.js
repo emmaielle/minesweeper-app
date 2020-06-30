@@ -25,7 +25,7 @@ const Home = () => {
     <SafeAreaView style={styles.screenContainer}>
       <ScrollView
         contentContainerStyle={styles.container}
-        contentInsetAdjustmentBehavior="automatic"
+        contentInsetAdjustmentBehavior="scrollableAxes"
         persistentScrollbar
       >
         {screenState === ScreenStates.intro && (

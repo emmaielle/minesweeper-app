@@ -61,8 +61,9 @@ const Cell = ({
         status === CELL_STATES.INCOGNITO
           ? CELL_STATES.FLAGGED
           : CELL_STATES.INCOGNITO;
+
       setStatus(newStatus);
-      onFlag();
+      onFlag(newStatus);
     }
   };
 
