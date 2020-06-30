@@ -1,15 +1,14 @@
-import { CELL_MULTIPLIER } from '../constants/game';
 import { getRandomNumber } from './math';
 
-export const getMatrixSideLength = (level) => {
-  return level.INDEX * CELL_MULTIPLIER;
-};
+export const getEmptySquareMatrix = (level) => {
+  const randomCoordinatesSet = getRandomCoordinatesSet(
+    level.MINES,
+    level.ROWS,
+    level.COLUMNS,
+  );
 
-export const getEmptySquareMatrix = (sideLength, totalMines) => {
-  const randomCoordinatesSet = getRandomCoordinatesSet(totalMines, sideLength);
-
-  return [...Array(sideLength)].map((_row, rowIndex) => {
-    return [...Array(sideLength)].map((_col, colIndex) => {
+  return [...Array(level.ROWS)].map((_row, rowIndex) => {
+    return [...Array(level.COLUMNS)].map((_col, colIndex) => {
       const formattedCoordinate = `${rowIndex}-${colIndex}`;
       const hasMine = randomCoordinatesSet.has(formattedCoordinate);
 
@@ -20,13 +19,13 @@ export const getEmptySquareMatrix = (sideLength, totalMines) => {
   });
 };
 
-export const getRandomCoordinatesSet = (maxMines, matrixSideLength) => {
+export const getRandomCoordinatesSet = (maxMines, rowLength, columnLength) => {
   const coordinates = new Set();
   let index = 0;
 
   while (index < maxMines) {
-    const coordinate = `${getRandomNumber(matrixSideLength)}-${getRandomNumber(
-      matrixSideLength,
+    const coordinate = `${getRandomNumber(rowLength)}-${getRandomNumber(
+      columnLength,
     )}`;
 
     if (!coordinates.has(coordinate)) {
@@ -37,14 +36,17 @@ export const getRandomCoordinatesSet = (maxMines, matrixSideLength) => {
   return coordinates;
 };
 
-export const getNeighbourCoordinates = (currentCoordinate, matrixLength) => {
+export const getNeighbourCoordinates = (currentCoordinate, level) => {
+  const rowLength = level.ROWS;
+  const columnLength = level.COLUMNS;
   const array = [];
+
   for (
     let row = currentCoordinate[0] - 1;
     row <= currentCoordinate[0] + 1;
     row++
   ) {
-    if (row >= 0 && row < matrixLength) {
+    if (row >= 0 && row < rowLength) {
       for (
         let column = currentCoordinate[1] - 1;
         column <= currentCoordinate[1] + 1;
@@ -53,7 +55,7 @@ export const getNeighbourCoordinates = (currentCoordinate, matrixLength) => {
         if (
           column < 0 ||
           (currentCoordinate[0] === row && currentCoordinate[1] === column) ||
-          column >= matrixLength
+          column >= columnLength
         ) {
           continue;
         }
@@ -79,18 +81,20 @@ export const countExposedCellsInMatrix = (matrix) => {
 export const updateMineFieldWithExposedCells = (
   currentLayout,
   currentCoordinate,
+  level,
 ) => {
-  recursiveExposedCellsSearch(currentLayout, currentCoordinate);
+  recursiveExposedCellsSearch(currentLayout, currentCoordinate, level);
   return currentLayout;
 };
 
 export const recursiveExposedCellsSearch = (
   currentLayout,
   currentCoordinate,
+  level,
 ) => {
   const neighbourCoordinates = getNeighbourCoordinates(
     currentCoordinate,
-    currentLayout[0].length,
+    level,
   );
 
   neighbourCoordinates.forEach((neighbourCoord) => {
@@ -110,9 +114,10 @@ export const recursiveExposedCellsSearch = (
     if (currentNeighbour.neighbourMines > 0) {
       return;
     }
-    recursiveExposedCellsSearch(currentLayout, [
-      currentNeighbourX,
-      currentNeighbourY,
-    ]);
+    recursiveExposedCellsSearch(
+      currentLayout,
+      [currentNeighbourX, currentNeighbourY],
+      level,
+    );
   });
 };

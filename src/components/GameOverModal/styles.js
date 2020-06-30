@@ -4,7 +4,7 @@ import { BLACK, FONT_SIZE, ACCENT, SECONDARY } from '../../constants/theme';
 export const styles = (visible) => {
   return StyleSheet.create({
     centeredView: {
-      bottom: -150,
+      bottom: -200,
       display: visible ? 'flex' : 'none',
       position: 'absolute',
     },

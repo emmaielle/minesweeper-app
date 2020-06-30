@@ -1,18 +1,23 @@
-export const CELL_MULTIPLIER = 8;
 export const LEVELS = [
   {
     NAME: 'Beginner',
     INDEX: 1,
+    ROWS: 8,
+    COLUMNS: 8,
     MINES: 10,
   },
   {
     NAME: 'Intermediate',
     INDEX: 2,
+    ROWS: 16,
+    COLUMNS: 16,
     MINES: 40,
   },
   {
     NAME: 'Expert',
     INDEX: 3,
+    ROWS: 16,
+    COLUMNS: 32,
     MINES: 99,
   },
 ];

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 
-import { LEVELS, CELL_MULTIPLIER } from '../../constants/game';
+import { LEVELS } from '../../constants/game';
 import { ACCENT } from '../../constants/theme';
 import {
   getNeighbourCoordinates,
@@ -18,8 +18,6 @@ const MineSweeper = () => {
   const [mineLayout, setMineLayout] = useState(null);
   const [newGame, setNewGame] = useState(true);
 
-  const matrixSideLength = currentLevel.INDEX * CELL_MULTIPLIER;
-
   const handleResetGame = (index) => {
     setCurrentLevel(LEVELS[index]);
     setNewGame(true);
@@ -29,6 +27,7 @@ const MineSweeper = () => {
   const handleExposeCells = (clickCoordinate) => {
     const isEmpty =
       mineLayout[clickCoordinate.x][clickCoordinate.y].neighbourMines === 0;
+
     if (isEmpty) {
       exposeEmptyCells(clickCoordinate);
     } else {
@@ -39,10 +38,11 @@ const MineSweeper = () => {
   };
 
   const exposeEmptyCells = (clickCoordinate) => {
-    const layout = updateMineFieldWithExposedCells(mineLayout, [
-      clickCoordinate.x,
-      clickCoordinate.y,
-    ]);
+    const layout = updateMineFieldWithExposedCells(
+      mineLayout,
+      [clickCoordinate.x, clickCoordinate.y],
+      currentLevel,
+    );
     setMineLayout([...layout]);
   };
 
@@ -54,14 +54,14 @@ const MineSweeper = () => {
   }, [layoutMineField, newGame]);
 
   const layoutMineField = useCallback(() => {
-    let layout = getEmptySquareMatrix(matrixSideLength, currentLevel.MINES);
+    let layout = getEmptySquareMatrix(currentLevel);
 
     layout = layout.map((column, columnIdex) =>
       column.map((cell, rowIndex) => {
         const cellCoordinate = [columnIdex, rowIndex];
         const neighbourCoordinates = getNeighbourCoordinates(
           cellCoordinate,
-          matrixSideLength,
+          currentLevel,
         );
 
         let neighbourMines = 0;
@@ -82,7 +82,7 @@ const MineSweeper = () => {
     );
 
     setMineLayout(layout);
-  }, [currentLevel.MINES, matrixSideLength]);
+  }, [currentLevel]);
 
   return (
     <View style={styles.mineSweeper}>
@@ -91,7 +91,6 @@ const MineSweeper = () => {
         <MineField
           level={currentLevel}
           layout={mineLayout}
-          matrixSideLength={matrixSideLength}
           onExposeCells={handleExposeCells}
           onNewGame={() => handleResetGame(currentLevel.INDEX - 1)}
         />
