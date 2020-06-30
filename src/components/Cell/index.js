@@ -120,7 +120,7 @@ Cell.propType = {
     ROWS: PropTypes.number.isRequired,
     COLUMNS: PropTypes.number.isRequired,
   }).isRequired,
-  neighbourMines: PropTypes.number,
+  neighbourMines: PropTypes.number.isRequired,
   onClick: PropTypes.func.isRequired,
   onFlag: PropTypes.func.isRequired,
   onGameOver: PropTypes.func.isRequired,

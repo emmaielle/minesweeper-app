@@ -1,7 +1,11 @@
 import { StyleSheet } from 'react-native';
 
-import { SECONDARY, FONT_SIZE, SECONDARY_ACCENT } from '../../constants/theme';
-import { NEIGHBOUR_COLORS } from '../../constants/game';
+import {
+  SECONDARY,
+  FONT_SIZE,
+  SECONDARY_ACCENT,
+  NEIGHBOUR_COLORS,
+} from '../../constants/theme';
 
 export const styles = (level, neighbourMines, exposed) => {
   return StyleSheet.create({
@@ -15,7 +19,6 @@ export const styles = (level, neighbourMines, exposed) => {
       height: level.INDEX > 1 ? 20 : 30,
       margin: '1%',
       justifyContent: 'center',
-      // width: level.INDEX > 1 ? 20 : 30,
     },
     text: {
       color: NEIGHBOUR_COLORS[neighbourMines],
